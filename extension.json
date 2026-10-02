@@ -1,7 +1,8 @@
 {
     "id": "freelancer",
     "name": "Freelancer services",
-    "version": "0.2.0",
+    "version": "0.2.1",
+    "requires": "0.11.0",
     "api": 1,
     "namespace": "Modulento\\Freelancer"
 }
