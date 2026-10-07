@@ -1,0 +1,80 @@
+{% extends 'layout/base.twig' %}
+
+{% block title %}{{ trans('freelancer.profile.title') }} – {{ site_name }}{% endblock %}
+
+{% block content %}
+{% include 'account/_nav.twig' %}
+<h1>{{ trans('freelancer.profile.title') }}</h1>
+<p>{{ trans('freelancer.profile.intro') }}</p>
+
+{% for error in errors %}
+    <p class="flash flash-error" role="alert">{{ error }}</p>
+{% endfor %}
+
+<form method="post" action="{{ url('/freelancer/profile') }}" class="stack-form wide">
+    {{ csrf_field() }}
+
+    <fieldset>
+        <legend>{{ trans('freelancer.profile.section.work') }}</legend>
+        <label for="hourly_rate">{{ trans('freelancer.profile.field.hourly_rate') }}</label>
+        <input id="hourly_rate" name="hourly_rate" value="{{ hourly_rate_input }}" inputmode="decimal">
+        <small>{{ trans('freelancer.profile.field.hourly_rate_hint') }}</small>
+
+        <label for="availability">{{ trans('freelancer.profile.field.availability') }}</label>
+        <select id="availability" name="availability">
+            {% for status in availability %}
+                <option value="{{ status }}" {{ profile.availability == status ? 'selected' }}>{{ trans('freelancer.profile.availability.' ~ status) }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="skills">{{ trans('freelancer.profile.field.skills') }}</label>
+        <textarea id="skills" name="skills" rows="4">{{ skills_text }}</textarea>
+        <small>{{ trans('freelancer.profile.field.skills_hint', {max: max_skills}) }}</small>
+    </fieldset>
+
+    {% for code in locales %}
+        <fieldset>
+            <legend>{{ trans('freelancer.profile.section.bio') }} – {{ locale_name(code) }}</legend>
+            <label for="bio_{{ code }}">{{ trans('freelancer.profile.field.bio') }}</label>
+            <textarea id="bio_{{ code }}" name="bio[{{ code }}]" rows="4" maxlength="500" lang="{{ code }}">{{ profile.bio[code] ?? '' }}</textarea>
+        </fieldset>
+    {% endfor %}
+
+    <button type="submit">{{ trans('core.account.save') }}</button>
+</form>
+
+<h2>{{ trans('freelancer.profile.section.portfolio') }}</h2>
+<p>{{ trans('freelancer.profile.portfolio_hint', {max: max_portfolio}) }}</p>
+
+{% if portfolio %}
+    <div class="portfolio-grid">
+        {% for item in portfolio %}
+            <figure>
+                <img src="{{ url(item.urls.thumb) }}" alt="{{ item.texts[locales[0]].title ?? '' }}" width="180" height="135">
+                {% for code, text in item.texts %}
+                    {% if text.title %}<figcaption>{{ text.title }}</figcaption>{% endif %}
+                {% endfor %}
+                <form method="post" action="{{ url('/freelancer/profile/portfolio/' ~ item.id ~ '/delete') }}">
+                    {{ csrf_field() }}
+                    <button type="submit" class="link-button">{{ trans('freelancer.profile.portfolio_delete') }}</button>
+                </form>
+            </figure>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<form method="post" action="{{ url('/freelancer/profile/portfolio') }}" enctype="multipart/form-data" class="stack-form">
+    {{ csrf_field() }}
+    <label for="image">{{ trans('freelancer.profile.field.portfolio_image') }}</label>
+    <input id="image" name="image" type="file" accept="image/jpeg,image/png,image/webp" required>
+
+    {% for code in locales %}
+        <label for="portfolio_title_{{ code }}">{{ trans('freelancer.profile.field.portfolio_title') }} ({{ locale_name(code) }})</label>
+        <input id="portfolio_title_{{ code }}" name="text[{{ code }}][title]" maxlength="100" lang="{{ code }}">
+        <label for="portfolio_description_{{ code }}">{{ trans('freelancer.profile.field.portfolio_description') }} ({{ locale_name(code) }})</label>
+        <textarea id="portfolio_description_{{ code }}" name="text[{{ code }}][description]" rows="2" maxlength="500" lang="{{ code }}"></textarea>
+    {% endfor %}
+
+    <button type="submit">{{ trans('freelancer.profile.portfolio_upload') }}</button>
+</form>
+{% endblock %}

@@ -13,11 +13,20 @@ revision, and both sides can agree on a cancellation. An order that is not
 accepted within three days expires; a delivery that is not answered within
 seven days counts as accepted.
 
+On top of an offer, a provider can keep a profile of their own under
+**Account → Freelancer profile** (linked from the account navigation): an
+hourly rate, availability (available, busy, paused), a short bio per
+language, up to 15 skills and up to 12 portfolio pictures. It shows as a
+block on the provider's public page once something is filled in. Identity
+verification (the blue checkmark) and the "top rated"/"fast responder"
+badges shown next to it are Modulento core features, not this extension's -
+they apply automatically to any provider, freelancer or not.
+
 ## Requirements
 
-Modulento 0.11.0 or newer, which provides interface version 1 in the form
-this extension uses (`OfferType::validate()` receives the offer's id since
-that release).
+Modulento 0.35.0 or newer, which provides `Registrar::providerSection()` and
+`Registrar::accountLink()` - the hooks the profile page and its public block
+use.
 
 Expiry and automatic acceptance are carried out by Modulento's scheduled
 tasks, so the cron has to run (**Administration → Tasks**).
@@ -37,8 +46,19 @@ and enable the extension.
 The extension keeps its data in tables of its own, all starting with
 `x_freelancer_`: `x_freelancer_package`, `x_freelancer_package_translation`,
 `x_freelancer_extra`, `x_freelancer_extra_translation` and
-`x_freelancer_requirement`. They reference the core's offers and go with
-them. Removing the package leaves the tables in place.
+`x_freelancer_requirement` (reference the core's offers), and
+`x_freelancer_profile`, `x_freelancer_profile_translation`,
+`x_freelancer_skill`, `x_freelancer_portfolio_item`,
+`x_freelancer_portfolio_translation` (reference the core's providers). They
+go with what they reference. Removing the package leaves the tables in
+place.
+
+Portfolio pictures are kept outside the web root under
+`var/uploads/freelancer-portfolio/<accountId>/` (by account, not by
+provider, so an account's own files are removed in one step when the
+account is deleted) and served publicly through this extension's own route
+`/freelancer/portfolio/<accountId>/<file>` - the same "unguessable random
+name" protection the core uses for offer pictures.
 
 ## Changing the look
 

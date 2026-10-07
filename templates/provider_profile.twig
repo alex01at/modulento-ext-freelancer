@@ -1,0 +1,29 @@
+{# Included on a provider's public profile, see Registrar::providerSection() in Extension.php. #}
+<section>
+    <h2>{{ trans('freelancer.profile.title') }}</h2>
+    <p>
+        <span class="badge badge-availability-{{ freelancer.availability }}">{{ trans('freelancer.profile.availability.' ~ freelancer.availability) }}</span>
+        {% if freelancer.hourly_rate %} · {{ trans('freelancer.profile.hourly_rate_display', {amount: money(freelancer.hourly_rate, currency)}) }}{% endif %}
+    </p>
+
+    {% if bio %}<p>{{ bio|nl2br }}</p>{% endif %}
+
+    {% if freelancer.skills %}
+        <p>
+            {% for skill in freelancer.skills %}
+                <span class="badge badge-skill">{{ skill }}</span>
+            {% endfor %}
+        </p>
+    {% endif %}
+
+    {% if portfolio %}
+        <div class="portfolio-grid">
+            {% for item in portfolio %}
+                <figure>
+                    <a href="{{ url(item.urls.large) }}"><img src="{{ url(item.urls.thumb) }}" alt="{{ item.text.title ?? '' }}" width="180" height="135"></a>
+                    {% if item.text.title %}<figcaption>{{ item.text.title }}</figcaption>{% endif %}
+                </figure>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
