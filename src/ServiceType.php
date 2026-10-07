@@ -36,9 +36,10 @@ final class ServiceType implements OfferType
         return '@freelancer/offer_detail.twig';
     }
 
-    public function formData(?int $offerId, ?array $typed, App $app): array
+    public function formData(?int $offerId, ?array $typed, App $app, ?array $locales = null): array
     {
         $locale = $app->translator->locale();
+        $locales ??= $app->locales->enabled();
 
         if ($typed !== null) {
             // Shown again after a failed validation: exactly what was typed.
@@ -56,7 +57,7 @@ final class ServiceType implements OfferType
                 'packages' => $packages,
                 'extras' => $extras,
                 'requirements' => is_array($typed['requirements'] ?? null) ? $typed['requirements'] : [],
-                'locales' => $app->locales->enabled(),
+                'locales' => $locales,
             ];
         }
 
@@ -86,7 +87,7 @@ final class ServiceType implements OfferType
             'packages' => $packages,
             'extras' => $extras,
             'requirements' => $stored['requirements'],
-            'locales' => $app->locales->enabled(),
+            'locales' => $locales,
         ];
     }
 
