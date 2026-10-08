@@ -26,6 +26,11 @@ final class ServiceType implements OfferType
         return 'freelancer.type.service';
     }
 
+    public function priceLabelKey(): string
+    {
+        return 'core.offer.price_from';
+    }
+
     public function formTemplate(): string
     {
         return '@freelancer/offer_form.twig';
