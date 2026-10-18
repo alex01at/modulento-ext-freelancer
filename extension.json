@@ -1,8 +1,9 @@
 {
     "id": "freelancer",
     "name": "Freelancer services",
-    "version": "0.3.3",
+    "version": "0.3.4",
     "requires": "0.54.0",
     "api": 1,
+    "description": "Turns the catalogue into a marketplace for services, sold as fixed packages with optional extras.",
     "namespace": "Modulento\\Freelancer"
 }
